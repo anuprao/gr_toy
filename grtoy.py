@@ -1634,8 +1634,8 @@ class xrApp(object):
 
 		self.currSelection = None
 
-		#self.time = 0
-		#self.start_time = time.clock()
+		self.time = 0
+		self.start_time = time.process_time()
 		
 	def toggle_visual_mode(self):
 		if visualMode.MONO == self.eVisualMode:
@@ -2314,11 +2314,11 @@ class xrApp(object):
 		else:
 			copyM44(self.p_scene, self.proj_scene_mono)
 
-		'''
-		time_sample = 0.0 #time.clock() - self.start_time
-		rotate = Matrix44.from_z_rotation(np.sin(time_sample*10.0) * 0.5 ) #+ 0.2)
-		self.proj_scene = self.proj_scene * rotate
-		'''
+		#'''
+		time_sample = time.process_time() - self.start_time
+		rotate = Matrix44.from_z_rotation(np.sin(time_sample*10.0) * 0.05 ) #+ 0.2)
+		self.proj_scene_mono = self.proj_scene_mono * rotate
+		#'''
 
 		self.byte_proj_matrix = self.p_scene.astype('f4').tobytes()
 
@@ -2442,8 +2442,16 @@ class xrApp(object):
 		pass
 
 	def mainloop(self):
-
-		FPS = float(60)
+		
+		# Preferred for low speed animation (UI)
+		#FPS = float(15)
+		
+		# Preferred for medium speed animation (3D interface mix)
+		FPS = float(30)
+		
+		# Preferred for high speed animation (3D Scene)
+		#FPS = float(60)
+		
 		render_interval = 1/FPS
 
 		# Force first render
@@ -2455,7 +2463,7 @@ class xrApp(object):
 
 			# TODO: self.prerenderUI_2D()
 
-			if True == self.bRedraw:
+			if True:# == self.bRedraw:
 
 				if visualMode.MONO == self.eVisualMode:
 					self.renderSceneFromEye(self.ctx.screen, eyePosition.NONE)
